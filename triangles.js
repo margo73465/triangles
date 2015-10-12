@@ -1,11 +1,11 @@
-var height = window.innerHeight,
-width = window.innerWidth,
-triangle_dim = 50,
-triangle_height = Math.sqrt(3/4) * triangle_dim,
-grid_width = Math.ceil(width / triangle_dim * 3 / 2),
-grid_height = Math.ceil(height / triangle_height);
-center_x = Math.floor(grid_width / 2);
-center_y = Math.floor(grid_height / 2)
+var height = window.innerHeight;
+var width = window.innerWidth;
+var triangle_dim = 50;
+var triangle_height = Math.sqrt(3/4) * triangle_dim;
+var grid_width = Math.ceil(width / triangle_dim * 3 / 2);
+var grid_height = Math.ceil(height / triangle_height);
+var center_x = Math.floor(grid_width / 2);
+var center_y = Math.floor(grid_height / 2);
 
 console.log(grid_width, center_x, center_y);
 
@@ -20,7 +20,7 @@ var grid = create_grid();
 
 var current_triangle = {
   grid_point: grid[center_y][center_x],
-  left_right: "left"
+  orientation: "left"
 };
 
 draw_triangle(current_triangle);
@@ -83,7 +83,7 @@ function add_triangle() {
   y = current_triangle.grid_point.id[1];
 
   var directions = [];
-  if (current_triangle.left_right === "left") {
+  if (current_triangle.orientation === "left") {
     directions = [[x, y, "right"], [x + 1, y, "right"], [x, y - 1, "right"]];
   } else {
     directions = [[x, y, "left"], [x - 1, y, "left"], [x, y + 1, "left"]];
@@ -100,48 +100,53 @@ function add_triangle() {
   var direction = avail_directions[Math.floor(Math.random() * avail_directions.length)];
   var x = direction[0], y = direction[1];
 
-  if (current_triangle.left_right === "left") {
+  if (current_triangle.orientation === "left") {
     current_triangle = {
       grid_point: grid[x][y],
-      left_right: "right"
+      orientation: "right"
     };
     draw_triangle(current_triangle);
   } else {
     current_triangle = {
       grid_point: grid[x][y],
-      left_right: "left"
+      orientation: "left"
     };
     draw_triangle(current_triangle);
   }
 }
 
 
-function exist_and_open (direction) {
-  var x = direction[0],
-  y = direction[1],
-  left_right = direction[2];
+function exist_and_open(direction) {
+  var x = direction[0];
+  var y = direction[1];
+  var orientation = direction[2];
 
-  if (grid[x] === undefined)
-    return false;
-  else if (grid[x][y] === undefined)
-    return false;
+  var exists_and_open = true;
 
-  if (left_right === "left") {
-    if (grid[x][y].left_triangle === true)
-      return false;
-  } else {
-    if (grid[x][y].right_triangle === true)
-      return false;
+  if (grid[x] === undefined) {
+    exists_and_open = false;
+  } else if (grid[x][y] === undefined) {
+    exists_and_open = false;
   }
 
-  return true;
+  if (orientation === "left") {
+    if (grid[x][y].left_triangle === true) {
+      exists_and_open = false;
+    }
+  } else {
+    if (grid[x][y].right_triangle === true) {
+      exists_and_open = false;
+    }
+  }
+
+  return exists_and_open;
 }
 
 
 function draw_triangle(triangle) {
 
   var rotation, fill;
-  if (triangle.left_right === "left") {
+  if (triangle.orientation === "left") {
     rotation = 0;
     grid[triangle.grid_point.id[0]][triangle.grid_point.id[1]].left_triangle = true;
   } else {
@@ -149,20 +154,18 @@ function draw_triangle(triangle) {
     grid[triangle.grid_point.id[0]][triangle.grid_point.id[1]].right_triangle = true;
   }
 
-  var verts = [ {x: triangle.grid_point.x, y: triangle.grid_point.y}, 
-    {x: triangle.grid_point.x - triangle_dim / 2, y: triangle.grid_point.y + triangle_height}, 
+  var verts = [ {x: triangle.grid_point.x, y: triangle.grid_point.y},
+    {x: triangle.grid_point.x - triangle_dim / 2, y: triangle.grid_point.y + triangle_height},
     {x: triangle.grid_point.x + triangle_dim / 2, y: triangle.grid_point.y + triangle_height} ];
 
-    var svg_triangle = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    svg_triangle.setAttribute("d", "M " + verts[0].x + " " + verts[0].y + " L " + verts[1].x
-                              + " " + verts[1].y + " L " + verts[2].x + " " + verts[2].y + " z");
-                              svg_triangle.setAttribute("transform", "rotate(" + rotation + ", " + verts[2].x + ", " + verts[2].y + ")")
-                              svg_triangle.style.stroke = "white";
-                              svg_triangle.style['stroke-width'] = "5px"; 
-                              svg_triangle.style.fill = "red";
-                              svg.appendChild(svg_triangle);
+  var svg_triangle = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  svg_triangle.setAttribute("d", "M " + verts[0].x + " " + verts[0].y + " L " + verts[1].x + " " + verts[1].y + " L " + verts[2].x + " " + verts[2].y + " z");
+  svg_triangle.setAttribute("transform", "rotate(" + rotation + ", " + verts[2].x + ", " + verts[2].y + ")")
+  svg_triangle.style.stroke = "white";
+  svg_triangle.style['stroke-width'] = "5px";
+  svg_triangle.style.fill = "red";
+  svg.appendChild(svg_triangle);
 
-                              triangles.push(triangle);
+  triangles.push(triangle);
 }
-
 
