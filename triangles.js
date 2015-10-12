@@ -82,23 +82,23 @@ function add_triangle() {
   var x = current_triangle.grid_point.id[0],
   y = current_triangle.grid_point.id[1];
 
-  var directions = [];
+  var options = [];
   if (current_triangle.orientation === "left") {
-    directions = [[x, y, "right"], [x + 1, y, "right"], [x, y - 1, "right"]];
+    options = [[x, y, "right"], [x + 1, y, "right"], [x, y - 1, "right"]];
   } else {
-    directions = [[x, y, "left"], [x - 1, y, "left"], [x, y + 1, "left"]];
+    options = [[x, y, "left"], [x - 1, y, "left"], [x, y + 1, "left"]];
   }
 
-  var avail_directions = directions.filter(exist_and_open);
+  var avail_options = options.filter(exist_and_open);
 
-  if (avail_directions.length === 0) {
+  if (avail_options.length === 0) {
     current_triangle = triangles[Math.floor(Math.random() * triangles.length)];
     add_triangle();
     return;
   }
 
-  var direction = avail_directions[Math.floor(Math.random() * avail_directions.length)];
-  var x = direction[0], y = direction[1];
+  var next_triangle = avail_options[Math.floor(Math.random() * avail_options.length)];
+  var x = next_triangle[0], y = next_triangle[1];
 
   if (current_triangle.orientation === "left") {
     current_triangle = {
