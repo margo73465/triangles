@@ -39,8 +39,8 @@ function create_grid() {
         offset = grid[i - 1][0].x - triangle_dim / 2;
       }
       var point = {
-        left_triangle: false,
-        right_triangle: false,
+        left: false,
+        right: false,
         id: [i,j],
         x: offset + j * triangle_dim,
         y: i * triangle_height
@@ -127,16 +127,8 @@ function exist_and_open(direction) {
     exists_and_open = false;
   } else if (grid[x][y] === undefined) {
     exists_and_open = false;
-  }
-
-  if (orientation === "left") {
-    if (grid[x][y].left_triangle === true) {
-      exists_and_open = false;
-    }
-  } else {
-    if (grid[x][y].right_triangle === true) {
-      exists_and_open = false;
-    }
+  } else if ( grid[x][y][orientation] ) {
+    exists_and_open = false;
   }
 
   return exists_and_open;
@@ -148,10 +140,10 @@ function draw_triangle(triangle) {
   var rotation, fill;
   if (triangle.orientation === "left") {
     rotation = 0;
-    grid[triangle.grid_point.id[0]][triangle.grid_point.id[1]].left_triangle = true;
+    grid[triangle.grid_point.id[0]][triangle.grid_point.id[1]].left = true;
   } else {
     rotation = 60;
-    grid[triangle.grid_point.id[0]][triangle.grid_point.id[1]].right_triangle = true;
+    grid[triangle.grid_point.id[0]][triangle.grid_point.id[1]].right = true;
   }
 
   var verts = [ {x: triangle.grid_point.x, y: triangle.grid_point.y},
