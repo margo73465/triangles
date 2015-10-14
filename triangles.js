@@ -7,8 +7,6 @@ var grid_height = Math.ceil(height / triangle_height);
 var center_x = Math.floor(grid_width / 2);
 var center_y = Math.floor(grid_height / 2);
 
-console.log(grid_width, center_x, center_y);
-
 var svg = document.getElementsByTagName('svg')[0];
 svg.setAttribute("width", width);
 svg.setAttribute("height", height);
@@ -41,7 +39,7 @@ function create_grid() {
       var point = {
         left: false,
         right: false,
-        id: [i,j],
+        id: [i, j],
         x: offset + j * triangle_dim,
         y: i * triangle_height
       };
@@ -79,8 +77,8 @@ function show_grid() {
 
 function add_triangle() {
 
-  var x = current_triangle.grid_point.id[0],
-  y = current_triangle.grid_point.id[1];
+  var x = current_triangle.grid_point.id[0];
+  var y = current_triangle.grid_point.id[1];
 
   var options = [];
   if (current_triangle.orientation === "left") {
@@ -89,7 +87,7 @@ function add_triangle() {
     options = [[x, y, "left"], [x - 1, y, "left"], [x, y + 1, "left"]];
   }
 
-  var avail_options = options.filter(exist_and_open);
+  var avail_options = options.filter(is_in_bounds);
 
   if (avail_options.length === 0) {
     current_triangle = triangles[Math.floor(Math.random() * triangles.length)];
@@ -98,46 +96,65 @@ function add_triangle() {
   }
 
   var next_triangle = avail_options[Math.floor(Math.random() * avail_options.length)];
-  var x = next_triangle[0], y = next_triangle[1];
+  var fill_index = colors.indexOf(current_triangle.fill);
+  if ( is_filled(next_triangle) ) {
+    fill_index += 1;
+    if ( fill_index >= colors.length ) {
+      fill_index = 0;
+    }
+  }
+  var x = next_triangle[0];
+  var y = next_triangle[1];
 
   if (current_triangle.orientation === "left") {
     current_triangle = {
       grid_point: grid[x][y],
-      orientation: "right"
+      orientation: "right",
+      fill: colors[fill_index]
     };
     draw_triangle(current_triangle);
   } else {
     current_triangle = {
       grid_point: grid[x][y],
-      orientation: "left"
+      orientation: "left",
+      fill: colors[fill_index]
     };
     draw_triangle(current_triangle);
   }
 }
 
+function is_in_bounds(option) {
+  var x = option[0];
+  var y = option[1];
+  var orientation = option[2];
 
-function exist_and_open(direction) {
-  var x = direction[0];
-  var y = direction[1];
-  var orientation = direction[2];
+  var in_bounds = true;
 
-  var exists_and_open = true;
-
-  if (grid[x] === undefined) {
-    exists_and_open = false;
-  } else if (grid[x][y] === undefined) {
-    exists_and_open = false;
-  } else if ( grid[x][y][orientation] ) {
-    exists_and_open = false;
+  if ( grid[x] === undefined ) {
+    in_bounds = false;
+  } else if ( grid[x][y] === undefined ) {
+    in_bounds = false;
   }
 
-  return exists_and_open;
+  return in_bounds;
 }
 
+function is_filled(option) {
+  var x = option[0];
+  var y = option[1];
+  var orientation = option[2];
+
+  var filled = false;
+
+  if ( grid[x][y][orientation] ) {
+    filled = true;
+  }
+
+  return filled;
+}
 
 function draw_triangle(triangle) {
-
-  var rotation, fill;
+  var rotation;
   if (triangle.orientation === "left") {
     rotation = 0;
     grid[triangle.grid_point.id[0]][triangle.grid_point.id[1]].left = true;
