@@ -89,7 +89,7 @@ function addTriangle() {
     options = [[x, y, "left"], [x - 1, y, "left"], [x, y + 1, "left"]];
   }
 
-  var availOptions = options.filter(isInBounds);
+  var availOptions = options.filter(isInBoundsAndNotPrevious);
 
   if (availOptions.length === 0) {
     currentTriangle = triangles[Math.floor(Math.random() * triangles.length)];
@@ -124,20 +124,30 @@ function addTriangle() {
   }
 }
 
-function isInBounds(option) {
+function isInBoundsAndNotPrevious(option) {
   var x = option[0];
   var y = option[1];
   var orientation = option[2];
 
   var inBounds = true;
+  var notPrevious = true;
+
+  if ( triangles.length > 1 ) {
+    var previousTriangle = triangles[triangles.length - 2];
+    var prevX = previousTriangle.gridPoint.id[0];
+    var prevY = previousTriangle.gridPoint.id[1];
+    var prevOrientation = previousTriangle.orientation;
+  }
 
   if ( grid[x] === undefined ) {
     inBounds = false;
   } else if ( grid[x][y] === undefined ) {
     inBounds = false;
+  } else if ( x === prevX && y === prevY && orientation === prevOrientation ) {
+    notPrevious = false;
   }
 
-  return inBounds;
+  return inBounds && notPrevious;
 }
 
 function isFilled(option) {
