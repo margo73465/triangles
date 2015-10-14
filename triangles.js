@@ -15,10 +15,12 @@ svg.setAttribute("onclick", "clearInterval(triangle_maker)");
 var triangle_maker;
 var triangles = [];
 var grid = create_grid();
+var colors = ["red", "orange", "yellow", "green", "blue", "purple"];
 
 var current_triangle = {
   grid_point: grid[center_y][center_x],
-  orientation: "left"
+  orientation: "left",
+  fill: "red"
 };
 
 draw_triangle(current_triangle);
@@ -172,7 +174,7 @@ function draw_triangle(triangle) {
   svg_triangle.setAttribute("transform", "rotate(" + rotation + ", " + verts[2].x + ", " + verts[2].y + ")")
   svg_triangle.style.stroke = "white";
   svg_triangle.style['stroke-width'] = "5px";
-  svg_triangle.style.fill = "red";
+  svg_triangle.style.fill = triangle.fill;
   svg.appendChild(svg_triangle);
 
   triangles.push(triangle);
