@@ -1,6 +1,6 @@
 var height = window.innerHeight;
 var width = window.innerWidth;
-var triangleDim = 150;
+var triangleDim = 50;
 var triangleHeight = Math.sqrt(3/4) * triangleDim;
 var gridWidth = Math.ceil(width / triangleDim);
 var gridHeight = Math.ceil(height / triangleHeight);
@@ -14,7 +14,7 @@ var triangleMaker;
 var grid = createGrid();
 
 var currentTriangle = randomTriangle();
-drawTriangle(currentTriangle, "red");
+drawTriangle(currentTriangle, "white");
 
 triangleMaker = setInterval(addTriangle, 300);
 
@@ -123,7 +123,7 @@ function addTriangle() {
   }
 
   currentTriangle = nextTriangle;
-  drawTriangle(currentTriangle, "red");
+  drawTriangle(currentTriangle, "white");
 }
 
 function drawTriangle(triangle, fill) {
@@ -132,7 +132,7 @@ function drawTriangle(triangle, fill) {
   var svgTriangle = document.createElementNS("http://www.w3.org/2000/svg", "path");
   svgTriangle.setAttribute("d", grid[triangle].path);
   svgTriangle.setAttribute("class", triangle);
-  svgTriangle.style.stroke = "white";
+  svgTriangle.style.stroke = "black";
   svgTriangle.style['stroke-width'] = "5px";
   svgTriangle.style.fill = fill;
   svg.appendChild(svgTriangle);
