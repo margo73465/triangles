@@ -87,14 +87,14 @@ function addTriangle() {
 
   let adjacentTriangles = [ grid[row][column + 1], grid[row][column - 1] ];
   if (orientation === "up") {
-    adjacentTriangles.push(grid[row + 1][column]);
+    if ( grid[row + 1] ) adjacentTriangles.push(grid[row + 1][column]);
   } else {
-    adjacentTriangles.push(grid[row - 1][column]);
+    if ( grid[row - 1] ) adjacentTriangles.push(grid[row - 1][column]);
   }
 
   var availableOptions = adjacentTriangles.filter(function(option) {
     if ( option ) {
-      if ( !option.on ) {
+      if ( option.on !== currentTriangle.on ) {
         return option;
       }
     }
