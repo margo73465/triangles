@@ -1,46 +1,45 @@
-var height = window.innerHeight;
-var width = window.innerWidth;
-var triangleDim = 50;
-var triangleHeight = Math.sqrt(3/4) * triangleDim;
-var gridWidth = Math.ceil(width / triangleDim);
-var gridHeight = Math.ceil(height / triangleHeight);
+// Constants
+const height = window.innerHeight;
+const width = window.innerWidth;
+const TRIANGLE_DIM = 50;
+const INTERVAL = 300;
 
-var svg = document.getElementsByTagName('svg')[0];
+// Derived values
+const triangleHeight = Math.sqrt(3/4) * TRIANGLE_DIM;
+const gridWidth = Math.ceil(width / TRIANGLE_DIM);
+const gridHeight = Math.ceil(height / triangleHeight);
+
+let triangleMaker;
+
+const svg = document.getElementById('svg');
 svg.setAttribute("width", width);
 svg.setAttribute("height", height);
 svg.setAttribute("onclick", "clearInterval(triangleMaker)");
 
-var triangleMaker;
-var grid = createGrid();
+const grid = createGrid();
 
-var currentTriangle = randomTriangle();
+let currentTriangle = randomTriangle();
 drawTriangle(currentTriangle, "white");
 
-triangleMaker = setInterval(addTriangle, 300);
+triangleMaker = setInterval(addTriangle, INTERVAL);
 
-// showGrid(grid);
+showGrid(grid);
 
-function getSVGPathString(verts) {
-  var SVGPathString = verts.reduce(function(previous, current) {
-    return previous + " L " + current;
-  });
-  return "M " + SVGPathString + " z";
-}
 
 function createGrid() {
   var grid = {}
   var y = 0;
   var j = 0;
   while ( y < height ) {
-    var x = j % 2 === 0 ? 0 : -triangleDim / 2;
+    var x = j % 2 === 0 ? 0 : -TRIANGLE_DIM / 2;
     var i = 0;
     while ( x < width ) {
       var upVerts = [ x + " " + y,
-        (x - triangleDim / 2) + " " + (y + triangleHeight),
-        (x + triangleDim / 2) + " " + (y + triangleHeight) ];
+        (x - TRIANGLE_DIM / 2) + " " + (y + triangleHeight),
+        (x + TRIANGLE_DIM / 2) + " " + (y + triangleHeight) ];
       var downVerts = [ x + " " + y,
-        (x + triangleDim) + " " + y,
-        (x + triangleDim / 2) + " " + (y + triangleHeight) ];
+        (x + TRIANGLE_DIM) + " " + y,
+        (x + TRIANGLE_DIM / 2) + " " + (y + triangleHeight) ];
       var up = i + "-" + j + "-up";
       var down = i + "-" + j + "-down";
       grid[up] = {
@@ -51,7 +50,7 @@ function createGrid() {
         fill: "none",
         path: getSVGPathString(downVerts)
       };
-      x += triangleDim;
+      x += TRIANGLE_DIM;
       i += 1;
     }
     y += triangleHeight;
@@ -63,7 +62,7 @@ function createGrid() {
 function showGrid(grid) {
   for ( var triangle in grid ) {
     if ( grid.hasOwnProperty(triangle) ) {
-      drawTriangle(triangle, "black");
+      drawTriangle(triangle, "white");
     }
   }
 }
@@ -76,6 +75,7 @@ function randomTriangle() {
   if ( grid[triangle].fill === "none" ) {
     return triangle;
   } else {
+    // Need to check if there is anywhere left to put a triangle.
     return randomTriangle();
   }
 }
@@ -86,14 +86,14 @@ function addTriangle() {
   var y = location[1];
   var orientation = location[2];
 
-  var options = [];
+  var adjacentTriangles = [];
   if (orientation === "up") {
     if ( y % 2 === 0 ) {
       var complicatedOption = Number(x) + "-" + (Number(y) + 1) + "-down";
     } else {
       var complicatedOption = (Number(x) - 1) + "-" + (Number(y) + 1) + "-down";
     }
-    options = [ Number(x) + "-" +  Number(y) + "-down",
+    adjacentTriangles = [ Number(x) + "-" +  Number(y) + "-down",
       (Number(x) - 1) + "-" +  Number(y) + "-down",
       complicatedOption ];
   } else {
@@ -102,12 +102,12 @@ function addTriangle() {
     } else {
       var complicatedOption = Number(x) + "-" + (Number(y) - 1) + "-up";
     }
-    options = [ Number(x) + "-" +  Number(y) + "-up",
+    adjacentTriangles = [ Number(x) + "-" +  Number(y) + "-up",
       (Number(x) + 1) + "-" +  Number(y) + "-up",
       complicatedOption ];
   }
 
-  var availOptions = options.filter(function(option) {
+  var availableOptions = adjacentTriangles.filter(function(option) {
     if ( grid[option] ) {
       if ( grid[option].fill === "none" ) {
         return true;
@@ -116,7 +116,7 @@ function addTriangle() {
     return false;
   });
 
-  var nextTriangle = availOptions[Math.floor(Math.random() * availOptions.length)];
+  var nextTriangle = availableOptions[Math.floor(Math.random() * availOptions.length)];
 
   if ( !nextTriangle ) {
     nextTriangle = randomTriangle();
@@ -136,4 +136,12 @@ function drawTriangle(triangle, fill) {
   svgTriangle.style['stroke-width'] = "5px";
   svgTriangle.style.fill = fill;
   svg.appendChild(svgTriangle);
+}
+
+// Utility function to get the SVG path string from an array of verticies.
+function getSVGPathString(verts) {
+  var SVGPathString = verts.reduce(function(previous, current) {
+    return previous + " L " + current;
+  });
+  return "M " + SVGPathString + " z";
 }
