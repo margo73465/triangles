@@ -40,7 +40,7 @@ function createGrid() {
         triangle.orientation = "down";
         triangle.vertices = [ x - TRIANGLE_DIM / 2 + " " + y,
           (x + TRIANGLE_DIM / 2) + " " + y,
-          x + " " + ( y + TRIANGLE_DIM )];
+          x + " " + ( y + triangleHeight)];
       }
       triangle.path = getSVGPathString(triangle.vertices);
       triangle.fill = "white";
