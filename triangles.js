@@ -66,7 +66,6 @@ function showGrid(grid) {
 function randomTriangle() {
   const i = Math.floor(Math.random() * gridHeight);
   const j = Math.floor(Math.random() * gridWidth);
-  toggleTriangle(grid[i][j]);
   return grid[i][j];
 }
 
@@ -81,6 +80,8 @@ function toggleTriangle(triangle) {
 }
 
 function addTriangle() {
+  toggleTriangle(currentTriangle);
+
   const row = currentTriangle.row;
   const column = currentTriangle.column;
   const orientation = currentTriangle.orientation;
@@ -107,7 +108,6 @@ function addTriangle() {
   }
 
   currentTriangle = nextTriangle;
-  toggleTriangle(currentTriangle);
 }
 
 // Adds the triangle to the SVG AND returns a reference to the SVG element.
