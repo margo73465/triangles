@@ -64,8 +64,8 @@ function showGrid(grid) {
 }
 
 function randomTriangle() {
-  var i = Math.floor(Math.random() * gridHeight);
-  var j = Math.floor(Math.random() * gridWidth);
+  const i = Math.floor(Math.random() * gridHeight);
+  const j = Math.floor(Math.random() * gridWidth);
   toggleTriangle(grid[i][j]);
   return grid[i][j];
 }
@@ -85,14 +85,14 @@ function addTriangle() {
   const column = currentTriangle.column;
   const orientation = currentTriangle.orientation;
 
-  let adjacentTriangles = [ grid[row][column + 1], grid[row][column - 1] ];
+  const adjacentTriangles = [ grid[row][column + 1], grid[row][column - 1] ];
   if (orientation === "up") {
     if ( grid[row + 1] ) adjacentTriangles.push(grid[row + 1][column]);
   } else {
     if ( grid[row - 1] ) adjacentTriangles.push(grid[row - 1][column]);
   }
 
-  var availableOptions = adjacentTriangles.filter(function(option) {
+  const availableOptions = adjacentTriangles.filter(function(option) {
     if ( option ) {
       if ( option.on !== currentTriangle.on ) {
         return option;
@@ -100,7 +100,7 @@ function addTriangle() {
     }
   });
 
-  var nextTriangle = availableOptions[Math.floor(Math.random() * availableOptions.length)];
+  let nextTriangle = availableOptions[Math.floor(Math.random() * availableOptions.length)];
 
   if ( !nextTriangle ) {
     nextTriangle = randomTriangle();
@@ -112,7 +112,7 @@ function addTriangle() {
 
 // Adds the triangle to the SVG AND returns a reference to the SVG element.
 function drawTriangle(triangle) {
-  var svgTriangle = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  const svgTriangle = document.createElementNS("http://www.w3.org/2000/svg", "path");
   svgTriangle.setAttribute("d", triangle.path);
   svgTriangle.setAttribute("class", "triangle");
   svgTriangle.style.stroke = "black";
@@ -127,7 +127,7 @@ function drawTriangle(triangle) {
 
 // Utility function to get the SVG path string from an array of verticies.
 function getSVGPathString(verts) {
-  var SVGPathString = verts.reduce(function(previous, current) {
+  const SVGPathString = verts.reduce(function(previous, current) {
     return previous + " L " + current;
   });
   return "M " + SVGPathString + " z";
