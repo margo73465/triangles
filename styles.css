@@ -1,0 +1,6 @@
+  body {
+    background-color: black;
+  }
+  .triangle {
+    transition: opacity 300ms;
+  }
